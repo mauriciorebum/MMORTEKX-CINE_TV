@@ -1,0 +1,65 @@
+name: Build LG webOS IPK
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "webos/**"
+      - "tests/**"
+      - "scripts/**"
+      - "package.json"
+      - ".github/workflows/build-webos.yml"
+      - "README.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test-and-package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: "npm"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Install icon tooling
+        run: python -m pip install --upgrade Pillow
+
+      - name: Install webOS CLI
+        run: npm install --global @webos-tools/cli
+
+      - name: Select webOS TV profile
+        run: ares-config --profile tv
+
+      - name: Generate 80x80 app icon from MMORTEKX logo
+        run: npm run icon
+
+      - name: Run automated tests
+        run: |
+          npm test
+          npm run check
+
+      - name: Package IPK
+        run: |
+          mkdir -p build
+          npm run package
+          test -n "$(find build -maxdepth 1 -type f -name '*.ipk' -print -quit)"
+
+      - name: Upload installable IPK
+        uses: actions/upload-artifact@v4
+        with:
+          name: MMORTEKX-CINE-TV-IPK
+          path: build/*.ipk
+          if-no-files-found: error
+          retention-days: 30
