@@ -6,7 +6,7 @@
   "main": "index.html",
   "title": "MMORTEKX CINE",
   "icon": "icon.png",
-  "largeIcon": "icon.png",
+  "largeIcon": "large-icon.png",
   "appDescription": "Sua biblioteca MMORTEKX na TV",
   "resolution": "1920x1080"
 }
