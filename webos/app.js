@@ -1020,7 +1020,8 @@ document.addEventListener("keydown", function (event) {
     if (code === 461 || code === 10009 || key === "Escape" || key === "Backspace") {
       event.preventDefault(); closePlayer(); return;
     }
-    if (active && (active.id === "seek-range" || active.tagName === "SELECT")) return;
+    if (active && active.tagName === "SELECT") return;
+    if ((key === "ArrowLeft" || key === "ArrowRight") && active && active.id === "seek-range") return;
     if (key === "ArrowLeft" || code === 412) {
       event.preventDefault();
       if (video && Number.isFinite(video.duration)) video.currentTime = Math.max(0, video.currentTime - 10);
