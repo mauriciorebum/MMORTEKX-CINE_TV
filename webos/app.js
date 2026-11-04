@@ -320,12 +320,6 @@ function renderMangaPage() {
     '<span>A seção de mangás ficará disponível em uma próxima etapa, como no aplicativo mobile.</span></div>' +
     footerHtml() + '</section>';
 }
-function renderMangaPage() {
-  return '<section class="page"><h1 class="page-heading">Mangá</h1>' +
-    '<div class="empty-state"><div class="empty-icon">▤</div><strong>Em desenvolvimento</strong>' +
-    '<span>A seção de mangás ficará disponível em uma próxima etapa, como no aplicativo mobile.</span></div>' +
-    footerHtml() + '</section>';
-}
 function renderFavoritesPage() {
   const rows = state.favorites;
   return '<section class="page"><h1 class="page-heading">Meus favoritos</h1><p class="page-subtitle">Seus títulos salvos neste perfil.</p>' +
