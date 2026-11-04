@@ -1,0 +1,13 @@
+{
+  "name": "mmortekx-cine-tv",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Aplicativo MMORTEKX CINE para LG webOS",
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "check": "node --check webos/app.js && node --check webos/core.js && node scripts/validate.mjs",
+    "icon": "python scripts/create_icon.py",
+    "package": "ares-package --no-minify -o build webos"
+  }
+}
