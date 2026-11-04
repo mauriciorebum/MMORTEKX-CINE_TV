@@ -1,0 +1,12 @@
+{
+  "id": "com.mmortekx.cine.tv",
+  "version": "0.1.0",
+  "vendor": "MMORTEKX",
+  "type": "web",
+  "main": "index.html",
+  "title": "MMORTEKX CINE",
+  "icon": "icon.png",
+  "largeIcon": "icon.png",
+  "appDescription": "Sua biblioteca MMORTEKX na TV",
+  "resolution": "1920x1080"
+}
