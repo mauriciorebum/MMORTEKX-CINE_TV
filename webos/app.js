@@ -34,6 +34,7 @@ const state = {
   modal: null,
   currentItem: null,
   detailData: null,
+  detailReturnPage: "home",
   seasons: [],
   episodes: [],
   seasonId: null,
@@ -626,6 +627,7 @@ async function saveProgress(item, positionSeconds, durationSeconds) {
   }
 }
 async function openDetails(item) {
+  state.detailReturnPage = state.page;
   state.currentItem = item;
   state.detailData = null;
   state.seasons = [];
@@ -792,7 +794,7 @@ async function closePlayer() {
 async function back() {
   if (state.page === "player") return closePlayer();
   if (state.modal) { state.modal = null; state.error = ""; render(); return; }
-  if (state.page === "details") { state.page = "home"; render(); return; }
+  if (state.page === "details") { state.page = state.detailReturnPage || "home"; render(); return; }
   if (state.page === "history") { state.page = "profile"; render(); return; }
   if (state.searchOpen) { state.searchOpen = false; state.searchQuery = ""; render(); return; }
   if (state.showSettings) { state.showSettings = false; render(); return; }
