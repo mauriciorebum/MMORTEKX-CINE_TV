@@ -105,7 +105,7 @@ function listCard(item, trailingAction) {
     (url ? '<img class="list-poster" src="' + esc(url) + '" alt="" onerror="this.style.opacity=.15">' : '<div class="list-poster poster-placeholder">🎬</div>') +
     '<div style="flex:1;min-width:0"><div class="episode-title">' + esc(item.name) + '</div><div class="muted">' + esc([item.year, item.type].filter(Boolean).join(" • ")) + '</div>' +
     (item.overview ? '<div class="episode-overview">' + esc(item.overview) + '</div>' : "") +
-    btn("details", "Ver detalhes", "secondary-btn", ' data-id="' + esc(item.id) + ' data-id="' + esc(item.id) + '"') +
+    btn("details", "Ver detalhes", "secondary-btn", ' data-id="' + esc(item.id) + '"') +
     '</div>' + (trailingAction || "") + '</article>';
 }
 function isFavorite(item) {
@@ -191,11 +191,12 @@ function render() {
   else if (state.page === "profiles") content = renderProfilesPage();
   else if (state.page === "home") content = renderHomePage();
   else if (state.page === "favorites") content = renderFavoritesPage();
+  else if (state.page === "manga") content = renderMangaPage();
   else if (state.page === "profile") content = renderProfilePage();
   else if (state.page === "history") content = renderHistoryPage();
   else if (state.page === "details") content = renderDetailsPage();
   else content = renderConnectPage();
-  const nav = connected && ["home", "favorites", "profile"].includes(state.page)
+  const nav = connected && ["home", "manga", "favorites", "profile"].includes(state.page)
     ? '<nav class="bottom-nav">' +
       navButton("home", "⌂", "Início") +
       navButton("manga", "▤", "Mangá") +
@@ -312,6 +313,12 @@ function renderHomePage() {
   }
   const settings = state.showSettings ? '<div class="back-row">' + btn("close-settings", "Fechar configurações", "secondary-btn") + '</div>' + renderSettingsPanel() : "";
   return '<section class="page">' + settings + inner + footerHtml() + '</section>';
+}
+function renderMangaPage() {
+  return '<section class="page"><h1 class="page-heading">Mangá</h1>' +
+    '<div class="empty-state"><div class="empty-icon">▤</div><strong>Em desenvolvimento</strong>' +
+    '<span>A seção de mangás ficará disponível em uma próxima etapa, como no aplicativo mobile.</span></div>' +
+    footerHtml() + '</section>';
 }
 function renderFavoritesPage() {
   const rows = state.favorites;
@@ -859,7 +866,6 @@ document.addEventListener("click", async function (event) {
   else if (action === "show-server-settings") { state.page = "home"; state.showSettings = true; render(); }
   else if (action === "nav") {
     const page = control.dataset.page;
-    if (page === "manga") { toast("A seção de mangás ficará disponível em uma próxima etapa, como no aplicativo mobile."); return; }
     state.page = page;
     render();
   }
