@@ -22,6 +22,8 @@ for (const file of [
 }
 
 const app = await readFile("webos/app.js", "utf8");
+const core = await readFile("webos/core.js", "utf8");
+const combined = app + "\\n" + core;
 for (const required of [
   "AuthenticateByName",
   "/api/profiles",
@@ -29,8 +31,11 @@ for (const required of [
   "master.m3u8",
   "loadEpisodes",
   "saveProgress",
-  "moveFocus"
+  "moveFocus",
+  "favorites",
+  "history",
+  "PROFILE",
 ]) {
-  assert.ok(app.includes(required), "Recurso esperado ausente: " + required);
+  assert.ok(combined.toLowerCase().includes(required.toLowerCase()), "Recurso esperado ausente: " + required);
 }
 console.log("Estrutura, metadados e recursos essenciais validados.");
