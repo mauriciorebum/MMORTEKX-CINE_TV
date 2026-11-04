@@ -32,7 +32,7 @@ O aplicativo é uma aplicação web estática em JavaScript/CSS, empacotada com 
 - `webos/core.js`: utilitários testáveis de dados Jellyfin, categorias, URLs e formatação.
 - `webos/styles.css`: interface TV em 16:9, foco e estados do Magic Remote.
 - `.github/workflows/build-webos.yml`: testes e empacotamento do IPK.
-- `scripts/create_icon.py`: cria o ícone PNG de 80×80 a partir do GIF oficial da marca.
+- `scripts/create_icon.py`: gera os ícones PNG de 80×80 e 130×130 a partir do GIF oficial da marca.
 
 O app usa o Jellyfin em `http://192.168.0.100:8096` por padrão e procura o serviço de perfis no mesmo host, porta `8788`, conforme o contrato do aplicativo mobile.
 
@@ -68,40 +68,17 @@ No Dashboard do Jellyfin, em **Networking → CORS Allowed Origins**, permita a 
 
 ### Serviço de perfis (porta 8788)
 
-O `profile-service/server.js` da aplicação mobile responde a OPTIONS, mas atualmente não envia `Access-Control-Allow-Origin`. Sem esse cabeçalho, o navegador da TV bloqueia chamadas de perfis, PIN, favoritos, histórico e progresso.
+O `profile-service/server.js` no repositório mobile já foi atualizado para enviar `Access-Control-Allow-Origin` somente às origens explicitamente permitidas. Para usar essa versão, atualize o serviço instalado no Debian e defina a variável de ambiente `PROFILE_CORS_ORIGINS`.
 
-No servidor, ajuste o bloco que cria o HTTP server no final de `profile-service/server.js` para adicionar CORS à origem autorizada. Exemplo restrito à origem opaca `null` (confirme no Web Inspector antes de aplicar):
+Por padrão, o código permite a origem opaca `null`, usada por alguns apps empacotados. Depois de abrir o Web Inspector da TV, confirme a origem real; se for diferente, substitua `null` pela origem exata, sem usar `*`.
 
-```js
-const allowedOrigins = new Set(
-  (process.env.PROFILE_CORS_ORIGINS || "null")
-    .split(",").map(value => value.trim()).filter(Boolean)
-);
+Exemplo de configuração no serviço systemd:
 
-http.createServer((req, res) => {
-  const origin = req.headers.origin;
-  if (origin && allowedOrigins.has(origin)) {
-    res.setHeader("Access-Control-Allow-Origin", origin);
-    res.setHeader("Vary", "Origin");
-  }
-
-  if (req.method === "OPTIONS") {
-    res.writeHead(204, {
-      "Access-Control-Allow-Methods": "GET,POST,PATCH,DELETE,OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type,Authorization",
-      "Access-Control-Max-Age": "600"
-    });
-    return res.end();
-  }
-  route(req, res);
-}).listen(PORT, HOST, () => {
-  console.log("MMORTEKX profile service listening on " + HOST + ":" + PORT);
-  console.log("Profiles data directory: " + DATA_DIR);
-});
+```ini
+Environment=PROFILE_CORS_ORIGINS=null
 ```
 
-Se a origem do Web Inspector for diferente de `null`, configure `PROFILE_CORS_ORIGINS` com a origem exata. Não use `*` em uma rede não confiável. Reinicie o serviço depois da alteração.
-
+O CORS do Jellyfin também precisa permitir a origem exata observada no Web Inspector. Não exponha os serviços à internet apenas para contornar CORS.
 ## Instalação na LG
 
 1. Baixe o artefato `MMORTEKX-CINE-TV-IPK` na execução bem-sucedida do workflow.
