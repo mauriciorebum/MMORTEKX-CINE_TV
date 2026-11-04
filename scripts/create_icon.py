@@ -1,9 +1,8 @@
 from pathlib import Path
-from PIL import Image, ImageOps, ImageDraw
+from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "webos" / "logo-transparent-fixed.gif"
-TARGET = ROOT / "webos" / "icon.png"
 
 if not SOURCE.exists():
     raise SystemExit(f"Logo não encontrado: {SOURCE}")
@@ -11,11 +10,17 @@ if not SOURCE.exists():
 with Image.open(SOURCE) as original:
     original.seek(0)
     logo = original.convert("RGBA")
-    logo.thumbnail((66, 66), Image.Resampling.LANCZOS)
 
-canvas = Image.new("RGBA", (80, 80), (8, 6, 13, 255))
-x = (80 - logo.width) // 2
-y = (80 - logo.height) // 2
-canvas.alpha_composite(logo, (x, y))
-canvas.convert("RGB").save(TARGET, format="PNG", optimize=True)
-print(f"Ícone gerado: {TARGET}")
+def create_icon(size: int, target_name: str) -> None:
+    image = logo.copy()
+    image.thumbnail((int(size * 0.82), int(size * 0.82)), Image.Resampling.LANCZOS)
+    canvas = Image.new("RGBA", (size, size), (8, 6, 13, 255))
+    x = (size - image.width) // 2
+    y = (size - image.height) // 2
+    canvas.alpha_composite(image, (x, y))
+    target = ROOT / "webos" / target_name
+    canvas.convert("RGB").save(target, format="PNG", optimize=True)
+    print(f"Ícone {size}x{size} gerado: {target}")
+
+create_icon(80, "icon.png")
+create_icon(130, "large-icon.png")
