@@ -452,6 +452,11 @@ async function connect(form) {
   state.error = "";
   state.token = null;
   state.userId = null;
+  state.activeProfile = null;
+  state.profileSessionToken = null;
+  state.favorites = [];
+  state.history = [];
+  state.progress = {};
   state.libraries = [];
   state.items = [];
   render();
@@ -902,17 +907,27 @@ document.addEventListener("click", async function (event) {
   else if (action === "details") {
     const item = state.items.find(function (row) { return row.id === id; }) ||
       state.favorites.find(function (row) { return row.id === id; }) ||
-      state.history.find(function (row) { return row.id === id; });
+      state.history.find(function (row) { return row.id === id; }) ||
+      continueWatching().find(function (row) { return row.id === id; });
     if (item) openDetails(item);
   }
   else if (action === "favorite") {
     const item = state.items.find(function (row) { return row.id === id; }) ||
       state.favorites.find(function (row) { return row.id === id; }) ||
-      state.history.find(function (row) { return row.id === id; });
+      state.history.find(function (row) { return row.id === id; }) ||
+      continueWatching().find(function (row) { return row.id === id; });
     if (item) toggleFavorite(item);
   }
   else if (action === "favorite-current" && state.currentItem) toggleFavorite(state.currentItem);
-  else if (action === "play-current" && state.currentItem) playItem(state.currentItem);
+  else if (action === "play-current" && state.currentItem) {
+    if (state.currentItem.type === "Series") {
+      const episode = state.episodes.find(function (row) { return !(row.UserData && row.UserData.Played); }) || state.episodes[0];
+      if (episode) playItem(mapJellyfinItem(episode));
+      else toast("Não há episódios disponíveis nesta temporada.");
+    } else {
+      playItem(state.currentItem);
+    }
+  }
   else if (action === "play-episode") {
     const episodeId = control.dataset.id;
     const episode = state.episodes.find(function (row) { return String(row.Id) === String(episodeId); });
@@ -1005,7 +1020,7 @@ document.addEventListener("keydown", function (event) {
     if (code === 461 || code === 10009 || key === "Escape" || key === "Backspace") {
       event.preventDefault(); closePlayer(); return;
     }
-    if ((key === "ArrowLeft" || key === "ArrowRight") && active && active.id === "seek-range") return;
+    if (active && (active.id === "seek-range" || active.tagName === "SELECT")) return;
     if (key === "ArrowLeft" || code === 412) {
       event.preventDefault();
       if (video && Number.isFinite(video.duration)) video.currentTime = Math.max(0, video.currentTime - 10);
