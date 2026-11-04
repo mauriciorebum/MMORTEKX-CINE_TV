@@ -13,6 +13,8 @@ for (const file of [
   "webos/app.js",
   "webos/core.js",
   "webos/styles.css",
+  "webos/icon.png",
+  "webos/large-icon.png",
   "webos/logo-transparent-fixed.gif",
   "webos/loading-1.gif",
   "webos/loading-2.gif",
