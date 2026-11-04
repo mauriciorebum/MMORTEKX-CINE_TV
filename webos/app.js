@@ -176,7 +176,7 @@ function render() {
     ? document.activeElement.selectionStart : null;
   const connected = Boolean(state.token && state.activeProfile);
   const header = '<header class="topbar">' +
-    '<div class="brand"><div class="brand-symbol">M</div><div>MMORTEKX <span>CINE</span></div></div>' +
+    '<div class="brand"><div class="brand-symbol"><img src="logo-transparent-fixed.gif" alt=""></div><div>MMORTEKX <span>CINE</span></div></div>' +
     '<div class="topbar-spacer"></div>' +
     (connected && state.searchOpen
       ? '<input id="search-input" class="search-input" type="text" placeholder="Buscar filmes, séries e animes..." value="' + esc(state.searchQuery) + '" autocomplete="off">'
@@ -227,7 +227,7 @@ function renderConnectPage() {
     '<div class="connect-brand"><div class="connect-kicker">SEU UNIVERSO DE ENTRETENIMENTO</div>' +
     '<h1 class="connect-title">Onde a capivara manda, o conteúdo rola solto.</h1>' +
     '<p class="connect-copy">Conecte sua TV ao servidor MMORTEKX para acessar seus filmes, séries, animes, favoritos e continuar de onde parou.</p>' +
-    '<div class="connect-mark">M</div></div>' +
+    '<div class="connect-mark"><img src="logo-transparent-fixed.gif" alt=""></div></div>' +
     '<form id="connect-form" class="panel">' +
     '<h2 class="panel-title">Conectar ao servidor Jellyfin</h2><div class="form-grid">' +
     '<label><span class="field-label">Endereço do servidor</span><input class="text-field" id="server-url" name="server" type="url" value="' + esc(state.server) + '" placeholder="http://192.168.0.100:8096" required></label>' +
@@ -1035,6 +1035,7 @@ document.addEventListener("keydown", function (event) {
     event.preventDefault(); back(); return;
   }
   if (isTextInput && (key === "ArrowLeft" || key === "ArrowRight")) return;
+  if (active && (active.tagName === "SELECT" || active.type === "range")) return;
   if (key === "ArrowLeft" || key === "ArrowRight" || key === "ArrowUp" || key === "ArrowDown") {
     event.preventDefault();
     moveFocus(key.replace("Arrow", "").toLowerCase());
